@@ -14,13 +14,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: [2, minlengthMessage],
     maxlength: [30, maxlengthMessage],
-    default: "Deivid Sans",
+    default: "Jacques Cousteau",
   },
   about: {
     type: String,
     minlength: [2, minlengthMessage],
     maxlength: [30, maxlengthMessage],
-    default: "Programador",
+    default: "Explorador",
   },
   avatar: {
     type: String,
@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
       message: urlMessage,
     },
     default:
-      "https://images.pexels.com/photos/3465204/pexels-photo-3465204.jpeg",
+      "https://practicum-content.s3.us-west-1.amazonaws.com/resources/moved_avatar_1604080799.jpg",
   },
   email: {
     type: String,
