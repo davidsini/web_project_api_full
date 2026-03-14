@@ -2,6 +2,7 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { NODE_ENV, JWT_SECRET } = process.env;
+const userOrPasswordNotFound = "Correo electrónico o contraseña incorrectos";
 
 const getUsers = async (req, res, next) => {
   try {
@@ -91,20 +92,20 @@ const updateAvatar = async (req, res, next) => {
   }
 };
 
-const login = async (req, res, next) => {
+const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
-      const error = new Error("Correo electrónico o contraseña incorrectos");
+      const error = new Error(userOrPasswordNotFound);
       error.statusCode = 401;
       throw error;
     }
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) {
-      const error = new Error("Correo electrónico o contraseña incorrectos");
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      const error = new Error(userOrPasswordNotFound);
       error.statusCode = 401;
       throw error;
     }
@@ -112,9 +113,9 @@ const login = async (req, res, next) => {
     const token = jwt.sign(
       { _id: user._id },
       NODE_ENV === "production" ? JWT_SECRET : "dev-secret",
-      { expiresIn: "7d" }, // Expira en 7 días
+      { expiresIn: "7d" },
     );
-    res.send({ token });
+    res.status(200).send({ token });
   } catch (err) {
     next(err);
   }
