@@ -63,8 +63,10 @@ app.get("/crash-test", () => {
 app.post("/login", login);
 app.post("/signup", createUserValidation, createUser);
 
-app.use("/", auth, routesUsers); // Middleware de autenticación aplicado
-app.use("/", auth, routesCards); // Middleware de autenticación aplicado
+app.use(auth);
+
+app.use("/", routesUsers); // Middleware de autenticación aplicado
+app.use("/", routesCards); // Middleware de autenticación aplicado
 
 app.use(errorLogger); // logger de errores
 

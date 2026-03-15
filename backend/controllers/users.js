@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { NODE_ENV, JWT_SECRET } = process.env;
 const userOrPasswordNotFound = "Correo electrónico o contraseña incorrectos";
+const NotFound = require("../errors/not-found");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -23,6 +24,19 @@ const getUser = async (req, res, next) => {
     res.status(200).send(user);
   } catch (err) {
     next(err); // Propaga el error al middleware de manejo de errores
+  }
+};
+
+const getCurrentUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).orFail(() => {
+      throw new NotFound(
+        "No se encuentra el usuario o contraseña en la base de datos",
+      );
+    });
+    res.status(200).send(user);
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -92,7 +106,7 @@ const updateAvatar = async (req, res, next) => {
   }
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
@@ -124,6 +138,7 @@ const login = async (req, res) => {
 module.exports = {
   getUsers,
   getUser,
+  getCurrentUser,
   createUser,
   updateUser,
   updateAvatar,
