@@ -1,7 +1,6 @@
 const { Joi, celebrate } = require("celebrate");
 const validator = require("validator");
 
-// Validación personalizada para URLs
 const validateURL = (value, helpers) => {
   if (validator.isURL(value)) {
     return value;
@@ -9,10 +8,8 @@ const validateURL = (value, helpers) => {
   return helpers.error("string.uri");
 };
 
-// Esquema para validar un enlace
 const linkValidation = Joi.string().required().custom(validateURL);
 
-//Esquema para validar registro de usuario
 const createUserValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -23,7 +20,6 @@ const createUserValidation = celebrate({
   }),
 });
 
-// Ejemplo de validación para un recurso "cards"
 const createCardValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),

@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { NODE_ENV, JWT_SECRET } = process.env;
 const userOrPasswordNotFound = "Correo electrónico o contraseña incorrectos";
-const NotFound = require("../errors/not-found");
+const NotFoundError = require("../errors/not-found");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -27,10 +27,44 @@ const getUser = async (req, res, next) => {
   }
 };
 
+const updateUser = async (req, res, next) => {
+  const { name, about } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { name, about },
+      { new: true, runValidators: true },
+    ).orFail(() => {
+      throw new NotFoundError("Usuario no encontrado");
+    });
+    res.send(user);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const updateAvatar = async (req, res, next) => {
+  const { avatar } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { avatar },
+      { new: true, runValidators: true },
+    ).orFail(() => {
+      throw new NotFoundError("Usuario no encontrado");
+    });
+    res.send(user);
+  } catch (err) {
+    next(err);
+  }
+};
+
 const getCurrentUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id).orFail(() => {
-      throw new NotFound(
+      throw new NotFoundError(
         "No se encuentra el usuario o contraseña en la base de datos",
       );
     });
@@ -68,44 +102,6 @@ const createUser = async (req, res, next) => {
   }
 };
 
-const updateUser = async (req, res, next) => {
-  const { name, about } = req.body;
-
-  try {
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { name, about },
-      { new: true, runValidators: true },
-    ).orFail(() => {
-      const error = new Error("Usuario no encontrado");
-      error.statusCode = 404;
-      throw error;
-    });
-    res.send(user);
-  } catch (err) {
-    next(err); // Propaga el error al middleware de manejo de errores
-  }
-};
-
-const updateAvatar = async (req, res, next) => {
-  const { avatar } = req.body;
-
-  try {
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { avatar },
-      { new: true, runValidators: true },
-    ).orFail(() => {
-      const error = new Error("Usuario no encontrado");
-      error.statusCode = 404;
-      throw error;
-    });
-    res.send(user);
-  } catch (err) {
-    next(err); // Propaga el error al middleware de manejo de errores
-  }
-};
-
 const login = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -129,6 +125,7 @@ const login = async (req, res, next) => {
       NODE_ENV === "production" ? JWT_SECRET : "dev-secret",
       { expiresIn: "7d" },
     );
+
     res.status(200).send({ token });
   } catch (err) {
     next(err);
