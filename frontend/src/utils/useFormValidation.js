@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 const useFormValidation = (config, formRef) => {
   const [inputList, setInputList] = useState([]);
@@ -6,57 +6,60 @@ const useFormValidation = (config, formRef) => {
   const [errors, setErrors] = useState({});
   const [isReady, setIsReady] = useState(false);
 
-  useEffect(() => {
-    const form = formRef.current;
-    if (form) {
-      setInputList(Array.from(form.querySelectorAll(config.inputSelector)));
-      setButtonElement(form.querySelector(config.submitButtonSelector));
-    }
-  }, [config, formRef]);
-
-  const showInputError = (inputElement, errorMessage) => {
-    if (inputElement && inputElement.id) {
-      const errorElement = formRef.current.querySelector(
-        `.${inputElement.id}-error`,
-      );
-      if (errorElement) {
-        inputElement.classList.add(config.inputErrorClass);
-        setErrors((state) => ({ ...state, [inputElement.id]: errorMessage }));
-        errorElement.textContent = errorMessage;
-        errorElement.classList.add(config.errorClass);
+  // 1. Funciones de error envueltas en useCallback
+  const showInputError = useCallback(
+    (inputElement, errorMessage) => {
+      if (inputElement && inputElement.id && formRef.current) {
+        const errorElement = formRef.current.querySelector(
+          `.${inputElement.id}-error`,
+        );
+        if (errorElement) {
+          inputElement.classList.add(config.inputErrorClass);
+          setErrors((state) => ({ ...state, [inputElement.id]: errorMessage }));
+          errorElement.textContent = errorMessage;
+          errorElement.classList.add(config.errorClass);
+        }
       }
-    }
-  };
+    },
+    [config, formRef],
+  );
 
-  const hideInputError = (inputElement) => {
-    if (inputElement && inputElement.id) {
-      const errorElement = formRef.current.querySelector(
-        `.${inputElement.id}-error`,
-      );
-      if (errorElement) {
-        inputElement.classList.remove(config.inputErrorClass);
-        setErrors((state) => ({ ...state, [inputElement.id]: "" }));
-        errorElement.classList.remove(config.errorClass);
-        errorElement.textContent = "";
+  const hideInputError = useCallback(
+    (inputElement) => {
+      if (inputElement && inputElement.id && formRef.current) {
+        const errorElement = formRef.current.querySelector(
+          `.${inputElement.id}-error`,
+        );
+        if (errorElement) {
+          inputElement.classList.remove(config.inputErrorClass);
+          setErrors((state) => ({ ...state, [inputElement.id]: "" }));
+          errorElement.classList.remove(config.errorClass);
+          errorElement.textContent = "";
+        }
       }
-    }
-  };
+    },
+    [config, formRef],
+  );
 
-  const checkInputValidity = (inputElement) => {
-    if (inputElement) {
-      if (!inputElement.validity.valid) {
-        showInputError(inputElement, inputElement.validationMessage);
-      } else {
-        hideInputError(inputElement);
+  // 2. Lógica de validación
+  const checkInputValidity = useCallback(
+    (inputElement) => {
+      if (inputElement) {
+        if (!inputElement.validity.valid) {
+          showInputError(inputElement, inputElement.validationMessage);
+        } else {
+          hideInputError(inputElement);
+        }
       }
-    }
-  };
+    },
+    [showInputError, hideInputError],
+  );
 
-  const hasInvalidInput = () => {
+  const hasInvalidInput = useCallback(() => {
     return inputList.some((inputElement) => !inputElement.validity.valid);
-  };
+  }, [inputList]);
 
-  const toggleButtonState = () => {
+  const toggleButtonState = useCallback(() => {
     if (buttonElement) {
       if (hasInvalidInput()) {
         buttonElement.classList.add(config.inactiveButtonClass);
@@ -66,32 +69,36 @@ const useFormValidation = (config, formRef) => {
         buttonElement.removeAttribute("disabled");
       }
     }
-  };
+  }, [buttonElement, hasInvalidInput, config]);
 
+  // 3. EFECTO DE INICIALIZACIÓN
   useEffect(() => {
-    const handleInput = (inputElement) => {
-      return () => {
-        checkInputValidity(inputElement);
-        toggleButtonState();
-      };
+    const form = formRef.current;
+    if (form) {
+      setInputList(Array.from(form.querySelectorAll(config.inputSelector)));
+      setButtonElement(form.querySelector(config.submitButtonSelector));
+    }
+  }, [config, formRef]);
+
+  // 4. Event Listeners
+  useEffect(() => {
+    const handleInput = (event) => {
+      checkInputValidity(event.target);
+      toggleButtonState();
     };
 
     inputList.forEach((inputElement) => {
-      const onInput = handleInput(inputElement);
-      inputElement.addEventListener("input", onInput);
-
-      // Guardar referencia para eliminar el event listener más tarde
-      inputElement.onInput = onInput;
-      setIsReady(true);
+      inputElement.addEventListener("input", handleInput);
     });
+
+    if (inputList.length > 0) setIsReady(true);
 
     return () => {
       inputList.forEach((inputElement) => {
-        const { onInput } = inputElement;
-        inputElement.removeEventListener("input", onInput);
+        inputElement.removeEventListener("input", handleInput);
       });
     };
-  }, [inputList]);
+  }, [inputList, checkInputValidity, toggleButtonState]);
 
   const resetValidation = () => {
     inputList.forEach((inputElement) => {
