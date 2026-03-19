@@ -30,7 +30,7 @@ var corsOptions = {
 
 const routesUsers = require("./routes/users");
 const routesCards = require("./routes/cards");
-const { login, createUser } = require("./controllers/users");
+const { signin, createUser } = require("./controllers/users");
 const auth = require("./middleware/auth");
 const { createUserValidation } = require("./middleware/validators");
 const { requestLogger, errorLogger } = require("./utils/logger");
@@ -61,23 +61,23 @@ app.get("/crash-test", () => {
   }, 0);
 });
 
-app.post("/login", login);
+app.post("/signin", signin);
 app.post("/signup", createUserValidation, createUser);
 
 app.use(auth);
 
-app.use("/", routesUsers); // Middleware de autenticación aplicado
-app.use("/", routesCards); // Middleware de autenticación aplicado
+app.use("/", routesUsers);
+app.use("/", routesCards);
 
-app.use(errorLogger); // logger de errores
+app.use(errorLogger);
 
-app.use(errors()); // Manejo de errores de Celebrate
+app.use(errors());
 
 // Middleware para rutas no encontradas
 app.use((req, res, next) => {
   const error = new Error("Recurso solicitado no encontrado");
   error.statusCode = 404;
-  next(error); // Propaga el error al middleware de manejo de errores
+  next(error);
 });
 
 // Middleware genérico para manejo de errores

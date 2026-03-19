@@ -102,7 +102,7 @@ const createUser = async (req, res, next) => {
   }
 };
 
-const login = async (req, res, next) => {
+const signin = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
@@ -139,5 +139,5 @@ module.exports = {
   createUser,
   updateUser,
   updateAvatar,
-  login,
+  signin,
 };

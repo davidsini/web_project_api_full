@@ -1,12 +1,10 @@
-//Custom hook para validar FORMS con uso de useRef
-
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 const useFormValidation = (config, formRef) => {
   const [inputList, setInputList] = useState([]);
   const [buttonElement, setButtonElement] = useState(null);
-  const [errors, setErrors] = useState({})
-  const [isReady, setIsReady] = useState(false)
+  const [errors, setErrors] = useState({});
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const form = formRef.current;
@@ -18,28 +16,31 @@ const useFormValidation = (config, formRef) => {
 
   const showInputError = (inputElement, errorMessage) => {
     if (inputElement && inputElement.id) {
-      const errorElement = formRef.current.querySelector(`.${inputElement.id}-error`);
+      const errorElement = formRef.current.querySelector(
+        `.${inputElement.id}-error`,
+      );
       if (errorElement) {
         inputElement.classList.add(config.inputErrorClass);
-        setErrors((state) => ({...state, [inputElement.id]:errorMessage}))
+        setErrors((state) => ({ ...state, [inputElement.id]: errorMessage }));
         errorElement.textContent = errorMessage;
         errorElement.classList.add(config.errorClass);
       }
     }
   };
-  
+
   const hideInputError = (inputElement) => {
     if (inputElement && inputElement.id) {
-      const errorElement = formRef.current.querySelector(`.${inputElement.id}-error`);
+      const errorElement = formRef.current.querySelector(
+        `.${inputElement.id}-error`,
+      );
       if (errorElement) {
         inputElement.classList.remove(config.inputErrorClass);
-        setErrors((state) => ({...state, [inputElement.id]:""}))
+        setErrors((state) => ({ ...state, [inputElement.id]: "" }));
         errorElement.classList.remove(config.errorClass);
         errorElement.textContent = "";
       }
     }
   };
-  
 
   const checkInputValidity = (inputElement) => {
     if (inputElement) {
@@ -74,16 +75,16 @@ const useFormValidation = (config, formRef) => {
         toggleButtonState();
       };
     };
-  
+
     inputList.forEach((inputElement) => {
       const onInput = handleInput(inputElement);
       inputElement.addEventListener("input", onInput);
-  
+
       // Guardar referencia para eliminar el event listener más tarde
       inputElement.onInput = onInput;
       setIsReady(true);
     });
-  
+
     return () => {
       inputList.forEach((inputElement) => {
         const { onInput } = inputElement;
@@ -91,7 +92,6 @@ const useFormValidation = (config, formRef) => {
       });
     };
   }, [inputList]);
-  
 
   const resetValidation = () => {
     inputList.forEach((inputElement) => {
