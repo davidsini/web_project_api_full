@@ -6,8 +6,7 @@
   "scripts": {
     "start": "nodemon app.js",
     "dev": "nodemon app.js",
-    "lint": "npx eslint .",
-    "node": "app.js" // borrar esto?
+    "lint": "npx eslint ."
   },
   "devDependencies": {
     "eslint": "^8.56.0",

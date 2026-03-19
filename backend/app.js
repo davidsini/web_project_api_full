@@ -1,18 +1,17 @@
 const express = require("express");
 const path = require("path");
-const routesUsers = require("./routes/users");
-const routesCards = require("./routes/cards");
-const { login, createUser } = require("./controllers/users");
-const auth = require("./middleware/auth");
-const { createUserValidation } = require("./middleware/validators");
-const { requestLogger, errorLogger } = require("./utils/logger");
 const mongoose = require("mongoose");
+let cors = require("cors");
+const { errors } = require("celebrate");
+
+require("dotenv").config();
+
 const allowedOrigins = [
   "https://around.kje.us",
   "http://localhost:3000",
   "https://api.around.kje.us",
+  "http://localhost:5173",
 ];
-let cors = require("cors");
 var corsOptions = {
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
@@ -29,19 +28,21 @@ var corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-const { errors } = require("celebrate");
-require("dotenv").config();
+const routesUsers = require("./routes/users");
+const routesCards = require("./routes/cards");
+const { login, createUser } = require("./controllers/users");
+const auth = require("./middleware/auth");
+const { createUserValidation } = require("./middleware/validators");
+const { requestLogger, errorLogger } = require("./utils/logger");
+
 const app = express();
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, DB_ADDRESS = "mongodb://127.0.0.1:27017/aroundb" } =
+  process.env;
 
 app.use(express.json());
 
-//Se conecta a la base de datos de mongodb en el puerto 27017 y la base de datos se llama aroundb
-mongoose.connect("mongodb://127.0.0.1:27017/aroundb", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(DB_ADDRESS);
 
 app.use(
   cors({
