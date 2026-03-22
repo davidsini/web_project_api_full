@@ -102,9 +102,9 @@ const deleteCard = async (req, res, next) => {
       throw new NotFound("Tarjeta no encontrada");
     });
 
-    if (card.owner.equals(userId)) {
-      throw new ForbiddenError("No tienes permiso para borrar esta tarjeta");
-    }
+    // if (card.owner.equals(userId)) {
+    //   throw new ForbiddenError("No tienes permiso para borrar esta tarjeta");
+    // }
 
     await Card.findByIdAndDelete(id);
     res.send({ message: "tarjeta eliminada" });

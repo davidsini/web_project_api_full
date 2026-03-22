@@ -3,11 +3,15 @@ import { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import errorMessages from "@utils/errorMessages";
 import Popup from "../Main/components/Popup/Popup";
-import CurrentUserContext from '@contexts/CurrentUserContext.js';
+import CurrentUserContext from "@contexts/CurrentUserContext.js";
+import "../../assets/blocks/login.css";
 
 const Login = ({ handleLogin }) => {
   const [disabled, setDisabled] = useState(true);
-  const [touchedFields, setTouchedFields] = useState({ email: false, password: false });
+  const [touchedFields, setTouchedFields] = useState({
+    email: false,
+    password: false,
+  });
 
   const {
     register,
@@ -25,7 +29,8 @@ const Login = ({ handleLogin }) => {
     mode: "onChange",
   });
 
-    const { popup, handleMessagePopup, handleClosePopup } = useContext(CurrentUserContext);
+  const { popup, handleMessagePopup, handleClosePopup } =
+    useContext(CurrentUserContext);
 
   useEffect(() => {
     trigger(); // Ejecutar validaciones iniciales al cargar
@@ -40,7 +45,7 @@ const Login = ({ handleLogin }) => {
   useEffect(() => {
     const hasErrors = Object.keys(errors).length > 0;
     const hasEmptyFields = Object.values(watchedValues).some(
-      (value) => value.trim() === ""
+      (value) => value.trim() === "",
     );
 
     setDisabled(hasErrors || hasEmptyFields);
@@ -60,7 +65,10 @@ const Login = ({ handleLogin }) => {
     // Reglas de validación
     if (!value) {
       errorMessage = errorMessages.required;
-    } else if (input.type === "email" && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i.test(value)) {
+    } else if (
+      input.type === "email" &&
+      !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i.test(value)
+    ) {
       errorMessage = errorMessages.email;
     } else if (
       input.type === "password" &&
@@ -91,12 +99,17 @@ const Login = ({ handleLogin }) => {
   return (
     <div className="login">
       <h1 className="login__welcome">Inicia sesión</h1>
-      <form className="login__form" noValidate onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="login__form"
+        noValidate
+        onSubmit={handleSubmit(onSubmit)}>
         <label className="login__label">
           <input
             id="email"
             className={`login__form-input ${
-              errors.email && touchedFields.email ? "login__form-input_error" : ""
+              errors.email && touchedFields.email
+                ? "login__form-input_error"
+                : ""
             }`}
             name="email"
             type="email"
@@ -120,7 +133,9 @@ const Login = ({ handleLogin }) => {
           <input
             id="password"
             className={`login__form-input ${
-              errors.password && touchedFields.password ? "login__form-input_error" : ""
+              errors.password && touchedFields.password
+                ? "login__form-input_error"
+                : ""
             }`}
             name="password"
             type="password"
@@ -141,16 +156,13 @@ const Login = ({ handleLogin }) => {
             onBlur={handleValidation}
           />
           {touchedFields.password && errors.password && (
-            <span className="login__error">
-              {errors.password.message}
-            </span>
+            <span className="login__error">{errors.password.message}</span>
           )}
         </label>
         <button
           type="submit"
           className={`login__link ${disabled ? "login__link_disabled" : ""}`}
-          disabled={disabled}
-        >
+          disabled={disabled}>
           Iniciar sesión
         </button>
       </form>
@@ -163,8 +175,8 @@ const Login = ({ handleLogin }) => {
       {popup && (
         <Popup onClose={handleClosePopup} title={popup.title}>
           {popup.children}
-          </Popup>
-        )}
+        </Popup>
+      )}
     </div>
   );
 };

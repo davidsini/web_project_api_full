@@ -1,17 +1,16 @@
 import { useContext } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import CurrentUserContext from '@contexts/CurrentUserContext.js';
+import CurrentUserContext from "@contexts/CurrentUserContext.js";
 import { removeToken } from "@utils/token";
 import Logo from "../Logo/Logo";
+import "../../../assets/blocks/nav.css";
 
-// Especificar setIsLoggedIn como una propiedad. ¡No olvides pasar
-// setIsLoggedIn como una propiedad del componente App!
 function NavBar() {
-  // Invocar el hook.
   const navigate = useNavigate();
 
-  const { isLoggedIn, setIsLoggedIn, userData } = useContext(CurrentUserContext);
-  
+  const { isLoggedIn, setIsLoggedIn, userData } =
+    useContext(CurrentUserContext);
+
   const location = useLocation();
 
   const isLoginPage = location.pathname === "/login";
@@ -25,7 +24,6 @@ function NavBar() {
     setIsLoggedIn(false);
   }
 
-
   function handleLogin() {
     if (isLoginPage) {
       navigate("/signup");
@@ -33,8 +31,7 @@ function NavBar() {
       navigate("/login");
     }
   }
-  
-  
+
   return (
     <nav className="nav">
       <div className="nav__logo">
@@ -47,10 +44,18 @@ function NavBar() {
           </NavLink>
         </li>
         <li>
-          <button onClick={signOut} className={`nav__link nav__button ${isLoggedIn ? "" : "login__link_visible" }`}>Cerrar sesión</button>
+          <button
+            onClick={signOut}
+            className={`nav__link nav__button ${isLoggedIn ? "" : "login__link_visible"}`}>
+            Cerrar sesión
+          </button>
         </li>
         <li>
-          <button onClick={handleLogin} className={`nav__link nav__button ${isLoggedIn ? "login__link_visible" : "" }`}>{isLoginPage ? "Regístrate" : "Iniciar sesión"}</button>
+          <button
+            onClick={handleLogin}
+            className={`nav__link nav__button ${isLoggedIn ? "login__link_visible" : ""}`}>
+            {isLoginPage ? "Regístrate" : "Iniciar sesión"}
+          </button>
         </li>
       </ul>
     </nav>

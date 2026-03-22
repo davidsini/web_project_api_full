@@ -10,7 +10,7 @@ const getUsers = async (req, res, next) => {
     const users = await User.find({});
     res.send(users);
   } catch (err) {
-    next(err); // Propaga el error al middleware de manejo de errores
+    next(err);
   }
 };
 
@@ -23,7 +23,7 @@ const getUser = async (req, res, next) => {
     });
     res.status(200).send(user);
   } catch (err) {
-    next(err); // Propaga el error al middleware de manejo de errores
+    next(err);
   }
 };
 

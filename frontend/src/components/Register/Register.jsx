@@ -3,18 +3,21 @@ import { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import errorMessages from "@utils/errorMessages";
 import Popup from "../Main/components/Popup/Popup";
-import CurrentUserContext from '@contexts/CurrentUserContext.js';
+import CurrentUserContext from "@contexts/CurrentUserContext.js";
 
 const Register = ({ handleRegistration }) => {
   const [disabled, setDisabled] = useState(true);
-  const [touchedFields, setTouchedFields] = useState({ email: false, password: false }); // Campos tocados
-  const { 
-    register, 
-    handleSubmit, 
-    setError, 
-    clearErrors, 
-    formState: { errors, isValid }, 
-    trigger 
+  const [touchedFields, setTouchedFields] = useState({
+    email: false,
+    password: false,
+  });
+  const {
+    register,
+    handleSubmit,
+    setError,
+    clearErrors,
+    formState: { errors, isValid },
+    trigger,
   } = useForm({
     defaultValues: {
       email: "",
@@ -26,7 +29,8 @@ const Register = ({ handleRegistration }) => {
     mode: "onChange",
   });
 
-  const { popup, handleMessagePopup, handleClosePopup } = useContext(CurrentUserContext);
+  const { popup, handleMessagePopup, handleClosePopup } =
+    useContext(CurrentUserContext);
 
   useEffect(() => {
     trigger();
@@ -47,13 +51,15 @@ const Register = ({ handleRegistration }) => {
     const value = input.value.trim();
     let errorMessage = "";
 
-    // Registrar que el campo fue "tocado"
     setTouchedFields((prev) => ({
       ...prev,
       [input.name]: true,
     }));
 
-    if (input.type === "email" && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i.test(value)) {
+    if (
+      input.type === "email" &&
+      !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/i.test(value)
+    ) {
       errorMessage = errorMessages.email;
     } else if (
       input.type === "password" &&
@@ -67,7 +73,11 @@ const Register = ({ handleRegistration }) => {
       errorMessage = errorMessages.minLength;
     } else if (input.name === "about" && value !== "" && value.length < 2) {
       errorMessage = errorMessages.minLength;
-    } else if (input.name === "avatar" && value !== "" && !/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(value)) {
+    } else if (
+      input.name === "avatar" &&
+      value !== "" &&
+      !/^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(value)
+    ) {
       errorMessage = errorMessages.url;
     }
 
@@ -89,12 +99,17 @@ const Register = ({ handleRegistration }) => {
   return (
     <div className="register">
       <p className="register__welcome">Regístrate</p>
-      <form className="register__form" noValidate onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="register__form"
+        noValidate
+        onSubmit={handleSubmit(onSubmit)}>
         <label className="register__label">
           <input
             id="email"
             className={`register__form-input ${
-              errors.email && touchedFields.email ? "register__form-input_error" : ""
+              errors.email && touchedFields.email
+                ? "register__form-input_error"
+                : ""
             }`}
             name="email"
             type="email"
@@ -119,7 +134,9 @@ const Register = ({ handleRegistration }) => {
           <input
             id="password"
             className={`register__form-input ${
-              errors.password && touchedFields.password ? "register__form-input_error" : ""
+              errors.password && touchedFields.password
+                ? "register__form-input_error"
+                : ""
             }`}
             name="password"
             type="password"
@@ -140,9 +157,7 @@ const Register = ({ handleRegistration }) => {
             onBlur={handleValidation}
           />
           {touchedFields.password && errors.password && (
-            <span className="register__error">
-              {errors.password.message}
-            </span>
+            <span className="register__error">{errors.password.message}</span>
           )}
         </label>
 
@@ -154,12 +169,15 @@ const Register = ({ handleRegistration }) => {
             type="text"
             placeholder="Nombre"
             {...register("name", {
-              validate: (value) => value === "" || value.length >= 2 || errorMessages.minLength,
+              validate: (value) =>
+                value === "" || value.length >= 2 || errorMessages.minLength,
             })}
             onInput={handleValidation}
             onBlur={handleValidation}
           />
-          {errors.name && <span className="register__error">{errors.name.message}</span>}
+          {errors.name && (
+            <span className="register__error">{errors.name.message}</span>
+          )}
         </label>
 
         <label className="register__label">
@@ -170,12 +188,15 @@ const Register = ({ handleRegistration }) => {
             type="text"
             placeholder="Ocupación"
             {...register("about", {
-              validate: (value) => value === "" || value.length >= 2 || errorMessages.minLength,
+              validate: (value) =>
+                value === "" || value.length >= 2 || errorMessages.minLength,
             })}
             onInput={handleValidation}
             onBlur={handleValidation}
           />
-          {errors.about && <span className="register__error">{errors.about.message}</span>}
+          {errors.about && (
+            <span className="register__error">{errors.about.message}</span>
+          )}
         </label>
 
         <label className="register__label">
@@ -186,19 +207,23 @@ const Register = ({ handleRegistration }) => {
             type="url"
             placeholder="URL de la imagen de perfil"
             {...register("avatar", {
-              validate: (value) => value === "" || /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(value) || errorMessages.url,
+              validate: (value) =>
+                value === "" ||
+                /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(value) ||
+                errorMessages.url,
             })}
             onInput={handleValidation}
             onBlur={handleValidation}
           />
-          {errors.avatar && <span className="register__error">{errors.avatar.message}</span>}
+          {errors.avatar && (
+            <span className="register__error">{errors.avatar.message}</span>
+          )}
         </label>
 
         <button
           type="submit"
           className={`register__link ${disabled ? "register__link_disabled" : ""}`}
-          disabled={disabled}
-        >
+          disabled={disabled}>
           Regístrate
         </button>
       </form>

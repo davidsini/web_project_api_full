@@ -20,6 +20,7 @@ import CurrentUserContext from "@contexts/CurrentUserContext.js";
 import trueImg from "@assets/images/trueImg.svg";
 import falseImg from "@assets/images/falseImg.svg";
 import messages from "@utils/messages.js";
+import "../assets/blocks/page.css";
 
 function App() {
   const [popup, setPopup] = useState(null);
