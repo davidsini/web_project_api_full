@@ -1,13 +1,13 @@
 import { getToken } from "./token.js";
 
+const token = getToken();
+
 class Api {
   constructor(options) {
     this._baseUrl = options.baseUrl;
     this._headers = options.headers;
   }
   async _makeRequest(endPoint, method = "GET", body = null) {
-    const token = getToken();
-
     const options = {
       method,
       headers: { ...this._headers, authorization: `Bearer ${token}` },

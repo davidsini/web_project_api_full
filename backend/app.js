@@ -36,9 +36,10 @@ const { createUserValidation } = require("./middleware/validators");
 const { requestLogger, errorLogger } = require("./utils/logger");
 
 const app = express();
-
-const { PORT = 3000, DB_ADDRESS = "mongodb://127.0.0.1:27017/aroundb" } =
-  process.env;
+const {
+  PORT = 3000,
+  DB_ADDRESS = "mongodb://127.0.0.1:27017/web_project_around_full",
+} = process.env;
 
 app.use(express.json());
 
