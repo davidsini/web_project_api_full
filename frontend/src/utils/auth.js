@@ -1,4 +1,4 @@
-export const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+export const BASE_URL = "http://136.113.168.28/api";
 
 export const register = async (name, about, avatar, email, password) => {
   const res = await fetch(`${BASE_URL}/signup`, {

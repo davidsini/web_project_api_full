@@ -61,7 +61,7 @@ class Api {
 }
 
 const api = new Api({
-  baseUrl: import.meta.env.VITE_API_URL || "http://localhost:3000",
+  baseUrl: "http://136.113.168.28/api",
   headers: {
     authorization: `Bearer ${token}`,
   },
